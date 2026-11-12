@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Exercise } from '../types'
 import { ExerciseView } from './ExerciseView'
 import { ProgressBar } from './ProgressBar'
+import { Icon } from './Icon'
 
 export interface LessonResult {
   score: number // 0–100, based on first attempts
@@ -63,12 +64,12 @@ export function LessonRunner({
     <div className="lesson">
       <div className="lesson-top">
         <Link to={exitTo} className="close" aria-label="Keluar dari latihan">
-          ✕
+          <Icon name="x" size={22} />
         </Link>
         <ProgressBar value={solved} max={total} />
-        {combo >= 3 && <span className="combo">🔥 {combo}</span>}
+        {combo >= 3 && <span className="combo">{combo} beruntun</span>}
       </div>
-      {queue.length > total && pos >= total && <p className="retry-note">Ulangi yang tadi salah 💪</p>}
+      {queue.length > total && pos >= total && <p className="retry-note">Ulangi soal yang tadi salah</p>}
       <ExerciseView key={`${current.key}-${attempt}`} ex={current} onDone={done} />
     </div>
   )

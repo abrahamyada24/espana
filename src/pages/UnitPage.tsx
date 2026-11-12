@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { unitById } from '../data/curriculum'
+import { unitById, unitNo } from '../data/curriculum'
+import { Icon } from '../components/Icon'
 import { useProgress } from '../lib/store'
 import { isUnitUnlocked } from '../lib/units'
 import { SpeakButton } from '../components/SpeakButton'
@@ -45,36 +46,38 @@ export default function UnitPage() {
   return (
     <div className="page">
       <Link to="/belajar" className="back">
-        ← Kurikulum
+        <Icon name="left" size={16} /> Daftar isi
       </Link>
       <header className="unit-header">
-        <span className="unit-emoji big">{unit.emoji}</span>
+        <span className="unit-no huge">{unitNo(unit.id)}</span>
         <div>
-          <span className={`level-pill lv-${unit.level}`}>{unit.level}</span>
-          <h1>{unit.title}</h1>
-          <p className="muted" lang="es">
+          <p className="kicker">
+            Unit {unitNo(unit.id)} · Level {unit.level}
+          </p>
+          <h1 className="display">{unit.title}</h1>
+          <p className="es-sub big" lang="es">
             {unit.titleEs}
           </p>
         </div>
       </header>
 
-      <div className="card cando">
-        <h3>Setelah unit ini, kamu bisa…</h3>
-        <ul>
+      <div className="cando">
+        <h2 className="section-title">Setelah unit ini, kamu bisa</h2>
+        <ol>
           {unit.canDo.map((c) => (
-            <li key={c}>✔️ {c}</li>
+            <li key={c}>{c}</li>
           ))}
-        </ul>
+        </ol>
         <div className="cando-actions">
           <Link to={`/latihan/${unit.id}`} className="btn primary big">
-            ▶ Mulai latihan
+            Mulai latihan <Icon name="right" size={18} />
           </Link>
           {inDeck < unit.vocab.length && (
             <button className="btn" onClick={() => addWords(unit.vocab.map((w) => w.id))}>
-              + Tambah {unit.vocab.length - inDeck} kata ke kartu ulasan
+              <Icon name="plus" size={16} /> Tambah {unit.vocab.length - inDeck} kata ke ulasan
             </button>
           )}
-          {inDeck === unit.vocab.length && <span className="muted small">✅ Semua kata ada di kartu ulasan</span>}
+          {inDeck === unit.vocab.length && <span className="note">Semua kata sudah ada di dek ulasan.</span>}
         </div>
       </div>
 
@@ -119,7 +122,7 @@ export default function UnitPage() {
       )}
 
       {tab === 'tatabahasa' && (
-        <div className="card grammar">
+        <div className="grammar">
           <h2>{unit.grammar.title}</h2>
           {unit.grammar.explanation.map((p, i) => (
             <p key={i}>
@@ -164,15 +167,18 @@ export default function UnitPage() {
               </li>
             ))}
           </ul>
-          {unit.grammar.tip && <div className="tip">💡 {unit.grammar.tip}</div>}
+          {unit.grammar.tip && <aside className="tip">
+              <span className="label">Catatan</span>
+              {unit.grammar.tip}
+            </aside>}
         </div>
       )}
 
       {tab === 'dialog' && (
-        <div className="card">
+        <div>
           <div className="row-between">
             <button className="btn" onClick={playDialogue}>
-              ▶ Putar seluruh dialog
+              <Icon name="play" size={16} /> Putar seluruh dialog
             </button>
             <label className="toggle">
               <input type="checkbox" checked={showTranslation} onChange={(e) => setShowTranslation(e.target.checked)} /> Tampilkan terjemahan

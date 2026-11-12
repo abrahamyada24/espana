@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
-import { LEVELS } from '../data/curriculum'
+import { LEVELS, unitNo } from '../data/curriculum'
 import { effectiveStreak, today, useProgress } from '../lib/store'
 import { isMature } from '../lib/srs'
 import { levelProgress, nextUnit } from '../lib/units'
 import { ProgressBar } from '../components/ProgressBar'
 import { SpeakButton } from '../components/SpeakButton'
+import { Icon } from '../components/Icon'
 
 const PHRASES = [
   { es: 'Poco a poco se va lejos.', id_: 'Sedikit demi sedikit, kita bisa pergi jauh.' },
@@ -18,9 +19,9 @@ const PHRASES = [
 
 function greeting() {
   const h = new Date().getHours()
-  if (h < 12) return '¡Buenos días!'
-  if (h < 19) return '¡Buenas tardes!'
-  return '¡Buenas noches!'
+  if (h < 12) return 'Buenos días'
+  if (h < 19) return 'Buenas tardes'
+  return 'Buenas noches'
 }
 
 export default function Home() {
@@ -34,127 +35,120 @@ export default function Home() {
   const mature = cards.filter(isMature).length
   const next = nextUnit(progress)
   const phrase = PHRASES[new Date().getDate() % PHRASES.length]
+  const dateLine = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })
 
-  // Last 14 days of activity.
   const days = Array.from({ length: 14 }, (_, i) => {
     const d = new Date()
     d.setDate(d.getDate() - (13 - i))
     const key = today(d)
     return { key, label: d.toLocaleDateString('id-ID', { weekday: 'narrow' }), xp: progress.history[key] ?? 0 }
   })
-  const maxXp = Math.max(goal, ...days.map((d) => d.xp))
 
   return (
     <div className="page">
-      <header className="hero">
-        <div>
-          <h1>{greeting()}</h1>
-          <p className="muted">{progress.xp === 0 ? 'Selamat datang! Mari mulai perjalanan bahasa Spanyolmu.' : 'Lanjutkan belajarmu hari ini.'}</p>
-        </div>
-        <div className="hero-flag" aria-hidden>
-          🇪🇸 🇲🇽 🇦🇷 🇨🇴
-        </div>
+      <header className="page-head">
+        <p className="kicker">{dateLine}</p>
+        <h1 className="display">{greeting()}.</h1>
+        <p className="lede">
+          {progress.xp === 0
+            ? 'Mulai dari unit pertama. Lima belas menit sehari sudah cukup untuk membangun kebiasaan.'
+            : 'Lanjutkan dari terakhir kali kamu berhenti, lalu ulas kosakata yang jatuh tempo.'}
+        </p>
       </header>
 
-      <section className="grid-3">
-        <div className="card stat">
-          <span className="stat-icon">🔥</span>
-          <div>
-            <div className="stat-num">{streak} hari</div>
-            <div className="muted small">Runtutan · terbaik {progress.bestStreak}</div>
-          </div>
+      <section className="ledger">
+        <div className="ledger-cell">
+          <span className="label">Runtutan</span>
+          <span className="figure">{streak}</span>
+          <span className="note">hari · terbaik {progress.bestStreak}</span>
         </div>
-        <div className="card stat">
-          <span className="stat-icon">🎯</span>
-          <div style={{ flex: 1 }}>
-            <div className="stat-num">
-              {todayXp}/{goal} XP
-            </div>
-            <ProgressBar value={todayXp} max={goal} color={todayXp >= goal ? 'var(--green)' : undefined} />
-          </div>
+        <div className="ledger-cell">
+          <span className="label">Hari ini</span>
+          <span className="figure">
+            {todayXp}
+            <small>/{goal}</small>
+          </span>
+          <ProgressBar value={todayXp} max={goal} />
         </div>
-        <div className="card stat">
-          <span className="stat-icon">🧠</span>
-          <div>
-            <div className="stat-num">{cards.length} kata</div>
-            <div className="muted small">{mature} sudah dikuasai (≥21 hari)</div>
-          </div>
+        <div className="ledger-cell">
+          <span className="label">Kosakata</span>
+          <span className="figure">{cards.length}</span>
+          <span className="note">{mature} sudah dikuasai</span>
         </div>
-      </section>
-
-      <section className="grid-2">
-        {next ? (
-          <Link to={`/unit/${next.id}`} className="card cta">
-            <span className="cta-emoji">{next.emoji}</span>
-            <div>
-              <div className="eyebrow">Lanjutkan · {next.level}</div>
-              <h2>{next.title}</h2>
-              <p className="muted" lang="es">
-                {next.titleEs}
-              </p>
-            </div>
-            <span className="cta-arrow">→</span>
-          </Link>
-        ) : (
-          <div className="card cta">
-            <span className="cta-emoji">🏆</span>
-            <div>
-              <h2>Semua unit selesai!</h2>
-              <p className="muted">¡Enhorabuena! Teruskan ulasan agar kosakata tetap melekat.</p>
-            </div>
-          </div>
-        )}
-        <Link to="/ulasan" className={`card cta ${due ? 'cta-alert' : ''}`}>
-          <span className="cta-emoji">🃏</span>
-          <div>
-            <div className="eyebrow">Ulasan berjarak (SRS)</div>
-            <h2>{due ? `${due} kartu menunggu` : 'Tidak ada kartu jatuh tempo'}</h2>
-            <p className="muted">{due ? 'Ulas sekarang sebelum lupa!' : 'Pelajari unit baru untuk menambah kartu.'}</p>
-          </div>
-          <span className="cta-arrow">→</span>
+        <Link to="/ulasan" className={`ledger-cell link ${due ? 'attn' : ''}`}>
+          <span className="label">Ulasan</span>
+          <span className="figure">{due}</span>
+          <span className="note">
+            {due ? 'kartu jatuh tempo' : 'tidak ada kartu'} <Icon name="right" size={14} />
+          </span>
         </Link>
       </section>
 
-      <section className="grid-2">
-        <div className="card">
-          <h3>Aktivitas 14 hari</h3>
-          <div className="chart" role="img" aria-label="Grafik XP harian 14 hari terakhir">
-            {days.map((d) => (
-              <div key={d.key} className="chart-col" title={`${d.key}: ${d.xp} XP`}>
-                <div className="chart-bar-wrap">
-                  <div className={`chart-bar ${d.xp >= goal ? 'met' : ''}`} style={{ height: `${(d.xp / maxXp) * 100}%` }} />
-                </div>
-                <span className="chart-label">{d.label}</span>
-              </div>
-            ))}
+      <section className="block">
+        <h2 className="section-title">Lanjutkan</h2>
+        {next ? (
+          <Link to={`/unit/${next.id}`} className="continue">
+            <span className="unit-no">{unitNo(next.id)}</span>
+            <span className="continue-body">
+              <span className="tag">{next.level}</span>
+              <span className="continue-title">{next.title}</span>
+              <span className="es-sub">{next.titleEs}</span>
+            </span>
+            <span className="continue-go">
+              Buka unit <Icon name="right" size={18} />
+            </span>
+          </Link>
+        ) : (
+          <div className="continue">
+            <span className="continue-body">
+              <span className="continue-title">Semua unit sudah selesai.</span>
+              <span className="es-sub">¡Enhorabuena! Teruskan ulasan harian agar kosakata tetap melekat.</span>
+            </span>
           </div>
+        )}
+      </section>
+
+      <section className="two-col block">
+        <div>
+          <h2 className="section-title">14 hari terakhir</h2>
+          <div className="heat" role="img" aria-label="Aktivitas XP 14 hari terakhir">
+            {days.map((d) => {
+              const lvl = d.xp === 0 ? 0 : d.xp < goal / 2 ? 1 : d.xp < goal ? 2 : 3
+              return (
+                <div key={d.key} className="heat-cell" title={`${d.key}: ${d.xp} XP`}>
+                  <span className={`heat-sq h${lvl}`} />
+                  <span className="heat-label">{d.label}</span>
+                </div>
+              )
+            })}
+          </div>
+          <p className="note">Kotak penuh berarti target harian tercapai.</p>
         </div>
-        <div className="card phrase">
-          <h3>Frasa hari ini</h3>
-          <p className="phrase-es" lang="es">
-            <SpeakButton text={phrase.es} /> {phrase.es}
-          </p>
-          <p className="muted">{phrase.id_}</p>
+        <div>
+          <h2 className="section-title">Frasa hari ini</h2>
+          <blockquote className="pull">
+            <p lang="es">{phrase.es}</p>
+            <footer>
+              <SpeakButton text={phrase.es} size="sm" /> {phrase.id_}
+            </footer>
+          </blockquote>
         </div>
       </section>
 
-      <section className="card">
-        <h3>Progres CEFR</h3>
-        <div className="levels-mini">
+      <section className="block">
+        <h2 className="section-title">Progres per level CEFR</h2>
+        <div className="levels">
           {LEVELS.map((l) => {
             const lp = levelProgress(l.level, progress)
             return (
-              <div key={l.level} className="level-mini">
-                <span className={`level-pill lv-${l.level}`}>{l.level}</span>
-                <div style={{ flex: 1 }}>
-                  <div className="row-between small">
-                    <span>{l.name}</span>
-                    <span className="muted">
-                      {lp.passed}/{lp.total} unit {lp.testScore >= 70 ? '· ✅ ujian lulus' : ''}
-                    </span>
-                  </div>
-                  <ProgressBar value={lp.passed} max={lp.total} />
-                </div>
+              <div key={l.level} className="level-row">
+                <span className="level-code">{l.level}</span>
+                <span className="level-name">{l.name}</span>
+                <ProgressBar value={lp.passed} max={lp.total} />
+                <span className="level-count">
+                  {lp.passed}/{lp.total}
+                  {lp.testScore >= 70 && <Icon name="check" size={14} />}
+                </span>
               </div>
             )
           })}

@@ -21,7 +21,6 @@ const raw: RawUnit[] = [
   {
     id: 'saludos',
     level: 'A1',
-    emoji: '👋',
     title: 'Salam & Perkenalan',
     titleEs: 'Saludos y presentaciones',
     canDo: [
@@ -89,7 +88,6 @@ const raw: RawUnit[] = [
   {
     id: 'numeros',
     level: 'A1',
-    emoji: '🔢',
     title: 'Angka & Umur',
     titleEs: 'Los números y la edad',
     canDo: [
@@ -152,7 +150,6 @@ const raw: RawUnit[] = [
   {
     id: 'familia',
     level: 'A1',
-    emoji: '👨‍👩‍👧',
     title: 'Keluarga',
     titleEs: 'La familia',
     canDo: [
@@ -213,7 +210,6 @@ const raw: RawUnit[] = [
   {
     id: 'comida',
     level: 'A1',
-    emoji: '🥘',
     title: 'Makanan & Minuman',
     titleEs: 'La comida y la bebida',
     canDo: [
@@ -280,7 +276,6 @@ const raw: RawUnit[] = [
   {
     id: 'rutina',
     level: 'A1',
-    emoji: '⏰',
     title: 'Rutinitas Harian',
     titleEs: 'La rutina diaria',
     canDo: [
@@ -345,7 +340,6 @@ const raw: RawUnit[] = [
   {
     id: 'casa',
     level: 'A1',
-    emoji: '🏠',
     title: 'Rumah',
     titleEs: 'La casa',
     canDo: [
@@ -408,7 +402,6 @@ const raw: RawUnit[] = [
   {
     id: 'ciudad',
     level: 'A1',
-    emoji: '🏙️',
     title: 'Kota & Arah',
     titleEs: 'La ciudad y las direcciones',
     canDo: [
@@ -453,7 +446,7 @@ const raw: RawUnit[] = [
         ['¿Dónde está la estación?', 'Di mana stasiunnya?'],
         ['Gire a la derecha.', 'Belok ke kanan (formal).'],
       ].map(([es, id_]) => ({ es, id_ })),
-      tip: '"¡Vamos!" berarti "Ayo!", nama aplikasi ini 😉',
+      tip: '"¡Vamos!" berarti "Ayo!", dan itulah nama aplikasi ini.',
     },
     sentences: [
       ['¿Dónde está el museo?', 'Di mana museumnya?'],
@@ -473,7 +466,6 @@ const raw: RawUnit[] = [
   {
     id: 'tiempo',
     level: 'A1',
-    emoji: '📅',
     title: 'Hari, Bulan & Cuaca',
     titleEs: 'Los días, los meses y el clima',
     canDo: [
@@ -527,7 +519,6 @@ const raw: RawUnit[] = [
   {
     id: 'compras',
     level: 'A1',
-    emoji: '🛍️',
     title: 'Belanja & Pakaian',
     titleEs: 'De compras: la ropa',
     canDo: [
@@ -590,7 +581,6 @@ const raw: RawUnit[] = [
   {
     id: 'viajes',
     level: 'A2',
-    emoji: '✈️',
     title: 'Perjalanan (Masa Lampau)',
     titleEs: 'Los viajes: el pretérito indefinido',
     canDo: [
@@ -653,7 +643,6 @@ const raw: RawUnit[] = [
   {
     id: 'trabajo',
     level: 'A2',
-    emoji: '💼',
     title: 'Pekerjaan & Profesi',
     titleEs: 'El trabajo y las profesiones',
     canDo: [
@@ -714,7 +703,6 @@ const raw: RawUnit[] = [
   {
     id: 'salud',
     level: 'A2',
-    emoji: '🩺',
     title: 'Tubuh & Kesehatan',
     titleEs: 'El cuerpo y la salud',
     canDo: [
@@ -775,7 +763,6 @@ const raw: RawUnit[] = [
   {
     id: 'planes',
     level: 'A2',
-    emoji: '🎉',
     title: 'Rencana & Hobi',
     titleEs: 'Los planes y el tiempo libre',
     canDo: [
@@ -838,7 +825,6 @@ const raw: RawUnit[] = [
   {
     id: 'restaurante',
     level: 'A2',
-    emoji: '🍽️',
     title: 'Di Restoran',
     titleEs: 'En el restaurante',
     canDo: [
@@ -901,7 +887,6 @@ const raw: RawUnit[] = [
   {
     id: 'experiencias',
     level: 'B1',
-    emoji: '🌍',
     title: 'Pengalaman Hidup',
     titleEs: 'Experiencias: el pretérito perfecto',
     canDo: [
@@ -965,7 +950,6 @@ const raw: RawUnit[] = [
   {
     id: 'opiniones',
     level: 'B1',
-    emoji: '💬',
     title: 'Opini & Perasaan',
     titleEs: 'Opiniones, deseos y sentimientos',
     canDo: [
@@ -1049,3 +1033,6 @@ export const ALL_WORDS: (Word & { unitId: string })[] = UNITS.flatMap((u) =>
 export const WORD_BY_ID = new Map(ALL_WORDS.map((w) => [w.id, w]))
 
 export const unitById = (id: string) => UNITS.find((u) => u.id === id)
+
+/** Two-digit unit number, e.g. "01". */
+export const unitNo = (id: string) => String(UNITS.findIndex((u) => u.id === id) + 1).padStart(2, '0')

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { WORD_BY_ID, unitById } from '../data/curriculum'
+import { WORD_BY_ID, unitById, unitNo } from '../data/curriculum'
 import { useProgress } from '../lib/store'
 import { previewInterval, type Grade } from '../lib/srs'
 import { speak } from '../lib/speech'
@@ -69,8 +69,8 @@ export default function Review() {
   if (total === 0) {
     return (
       <div className="page center">
-        <div className="empty">🃏</div>
-        <h1>Belum ada kartu</h1>
+        <p className="kicker">Ulasan</p>
+        <h1 className="display">Dek masih kosong.</h1>
         <p className="muted">Selesaikan latihan unit atau tambahkan kosakata dari halaman unit untuk mulai mengulas.</p>
         <Link to="/belajar" className="btn primary">
           Mulai belajar
@@ -83,8 +83,8 @@ export default function Review() {
     const nextDue = Math.min(...Object.values(progress.srs).map((c) => c.due))
     return (
       <div className="page center">
-        <div className="empty">✅</div>
-        <h1>{reviewed ? `¡Bien hecho! ${reviewed} kartu diulas` : 'Semua kartu sudah diulas'}</h1>
+        <p className="kicker">Ulasan</p>
+        <h1 className="display">{reviewed ? `¡Bien hecho! ${reviewed} kartu selesai.` : 'Semua kartu sudah diulas.'}</h1>
         <p className="muted">
           Kartu berikutnya jatuh tempo{' '}
           {nextDue <= Date.now() ? 'sekarang' : new Date(nextDue).toLocaleString('id-ID', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}.
@@ -123,14 +123,14 @@ export default function Review() {
   return (
     <div className="page review">
       <div className="row-between">
-        <h1>{practice ? 'Latihan tambahan' : 'Ulasan'}</h1>
-        <span className="muted">
+        <h1 className="display small-display">{practice ? 'Latihan tambahan' : 'Ulasan'}</h1>
+        <span className="note">
           {i + 1} / {queue.length}
         </span>
       </div>
       <div className={`flashcard ${revealed ? 'revealed' : ''}`} onClick={() => !revealed && setRevealed(true)}>
         <div className="fc-meta muted small">
-          {unit?.emoji} {unit?.title} · {reverse ? 'Indonesia → Spanyol' : 'Spanyol → Indonesia'}
+          Unit {unit && unitNo(unit.id)} · {unit?.title} · {reverse ? 'Indonesia ke Spanyol' : 'Spanyol ke Indonesia'}
         </div>
         <div className="fc-front" lang={reverse ? 'id' : 'es'}>
           {reverse ? word.id_ : word.es}

@@ -27,7 +27,6 @@ export interface Grammar {
 export interface Unit {
   id: string
   level: Level
-  emoji: string
   title: string
   titleEs: string
   /** CEFR-style "can do" statements. */

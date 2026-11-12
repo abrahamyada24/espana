@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useProgress } from '../lib/store'
 import { speak, sttSupported, ttsSupported } from '../lib/speech'
+import { Icon } from '../components/Icon'
 
 export default function Settings() {
   const { progress, updateSettings, reset, importData } = useProgress()
@@ -18,10 +19,13 @@ export default function Settings() {
 
   return (
     <div className="page narrow">
-      <h1>Pengaturan</h1>
+      <header className="page-head">
+        <p className="kicker">Pengaturan</p>
+        <h1 className="display">Preferensi</h1>
+      </header>
 
-      <section className="card settings">
-        <h3>🎯 Target harian</h3>
+      <section className="settings">
+        <h2 className="section-title">Target harian</h2>
         <div className="seg">
           {[
             [10, 'Santai'],
@@ -36,14 +40,14 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="card settings">
-        <h3>🔊 Suara</h3>
+      <section className="settings">
+        <h2 className="section-title">Suara</h2>
         {!ttsSupported() && <p className="bad-text">Browser ini tidak mendukung text-to-speech.</p>}
         <label>
           Aksen
           <select value={s.accent} onChange={(e) => updateSettings({ accent: e.target.value as 'es-ES' | 'es-MX' })}>
-            <option value="es-ES">🇪🇸 Spanyol (España)</option>
-            <option value="es-MX">🇲🇽 Amerika Latin (México)</option>
+            <option value="es-ES">Spanyol (España)</option>
+            <option value="es-MX">Amerika Latin (México)</option>
           </select>
         </label>
         <label>
@@ -51,31 +55,31 @@ export default function Settings() {
           <input type="range" min={0.5} max={1.2} step={0.05} value={s.rate} onChange={(e) => updateSettings({ rate: Number(e.target.value) })} />
         </label>
         <button className="btn" onClick={() => speak('¡Hola! Bienvenido a tu curso de español.')}>
-          ▶ Tes suara
+          <Icon name="play" size={16} /> Tes suara
         </button>
         <p className="muted small">
-          Pengenalan suara: {sttSupported() ? '✅ didukung' : '❌ tidak didukung (gunakan Chrome/Edge untuk latihan bicara)'}. Kualitas suara bergantung pada
+          Pengenalan suara: {sttSupported() ? 'didukung' : 'tidak didukung (gunakan Chrome/Edge untuk latihan bicara)'}. Kualitas suara bergantung pada
           suara bahasa Spanyol yang terpasang di perangkatmu.
         </p>
       </section>
 
-      <section className="card settings">
-        <h3>🔓 Kurikulum</h3>
+      <section className="settings">
+        <h2 className="section-title">Kurikulum</h2>
         <label className="toggle">
           <input type="checkbox" checked={s.unlockAll} onChange={(e) => updateSettings({ unlockAll: e.target.checked })} />
           Buka semua unit (untuk yang sudah punya dasar)
         </label>
       </section>
 
-      <section className="card settings">
-        <h3>💾 Data</h3>
+      <section className="settings">
+        <h2 className="section-title">Data</h2>
         <p className="muted small">Progres disimpan di browser ini. Ekspor untuk cadangan atau pindah perangkat.</p>
         <div className="seg">
           <button className="btn" onClick={exportData}>
-            ⬇ Ekspor
+            <Icon name="download" size={16} /> Ekspor
           </button>
           <button className="btn" onClick={() => fileRef.current?.click()}>
-            ⬆ Impor
+            <Icon name="upload" size={16} /> Impor
           </button>
           <input
             ref={fileRef}
@@ -85,7 +89,7 @@ export default function Settings() {
             onChange={async (e) => {
               const f = e.target.files?.[0]
               if (!f) return
-              alert(importData(await f.text()) ? 'Progres berhasil diimpor ✅' : 'File tidak valid ❌')
+              alert(importData(await f.text()) ? 'Progres berhasil diimpor.' : 'File tidak valid.')
               e.target.value = ''
             }}
           />
@@ -95,7 +99,7 @@ export default function Settings() {
               if (confirm('Hapus semua progres? Tindakan ini tidak bisa dibatalkan.')) reset()
             }}
           >
-            🗑 Reset progres
+            <Icon name="trash" size={16} /> Reset progres
           </button>
         </div>
       </section>

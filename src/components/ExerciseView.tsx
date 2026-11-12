@@ -4,6 +4,7 @@ import { compareAnswer, similarity, type MatchResult } from '../lib/text'
 import { listen, speak, sttSupported } from '../lib/speech'
 import { SpeakButton } from './SpeakButton'
 import { AccentKeyboard } from './AccentKeyboard'
+import { Icon } from './Icon'
 
 const TITLES: Record<Exercise['kind'], string> = {
   'mc-es': 'Apa artinya?',
@@ -21,7 +22,7 @@ interface Feedback {
 }
 
 const MATCH_MSG: Record<MatchResult, string> = {
-  exact: '¡Perfecto! 🎉',
+  exact: '¡Perfecto!',
   accent: 'Benar! Tapi perhatikan tanda aksennya.',
   article: 'Benar! Ingat artikelnya juga.',
   close: 'Hampir! Ada salah ketik kecil.',
@@ -225,7 +226,7 @@ export function ExerciseView({ ex, onDone }: { ex: Exercise; onDone: (correct: b
           {sttSupported() ? (
             <>
               <button className={`mic ${listening ? 'on' : ''}`} onClick={record} disabled={!!feedback}>
-                {listening ? '⏹️ Berhenti' : '🎙️ Tekan & bicara'}
+                <Icon name={listening ? 'stop' : 'mic'} size={18} /> {listening ? 'Berhenti' : 'Tekan lalu bicara'}
               </button>
               {heard !== null && (
                 <p className="heard">

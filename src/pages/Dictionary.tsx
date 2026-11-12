@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ALL_WORDS, UNITS } from '../data/curriculum'
+import { ALL_WORDS, UNITS, unitNo } from '../data/curriculum'
+import { Icon } from '../components/Icon'
 import { clean, stripAccents } from '../lib/text'
 import { useProgress } from '../lib/store'
 import { SpeakButton } from '../components/SpeakButton'
@@ -18,8 +19,11 @@ export default function Dictionary() {
 
   return (
     <div className="page">
-      <h1>Kamus</h1>
-      <p className="muted">{ALL_WORDS.length} kata & frasa dari semua unit. Cari dalam bahasa Spanyol atau Indonesia (tanpa aksen pun bisa).</p>
+      <header className="page-head">
+        <p className="kicker">Kamus</p>
+        <h1 className="display">Diccionario</h1>
+        <p className="lede">{ALL_WORDS.length} kata dan frasa dari semua unit. Cari dalam bahasa Spanyol atau Indonesia, tanpa aksen pun bisa.</p>
+      </header>
       <input className="text-input search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari… mis. 'casa' atau 'rumah'" autoFocus />
       <div className="dict-list">
         {results.map((w) => {
@@ -35,11 +39,11 @@ export default function Dictionary() {
                 <span className="muted"> · {w.id_}</span>
                 {w.note && <span className="vocab-note"> {w.note}</span>}
               </div>
-              <Link to={`/unit/${u.id}`} className={`level-pill lv-${u.level}`} title={u.title}>
-                {u.level} {u.emoji}
+              <Link to={`/unit/${u.id}`} className="tag" title={u.title}>
+                {u.level} · {unitNo(u.id)}
               </Link>
               <button className="btn small" disabled={inDeck} onClick={() => addWords([w.id])} title="Tambah ke kartu ulasan">
-                {inDeck ? '✓' : '+'}
+                <Icon name={inDeck ? 'check' : 'plus'} size={14} />
               </button>
             </div>
           )

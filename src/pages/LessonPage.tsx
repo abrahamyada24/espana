@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { LEVELS, UNITS, unitById } from '../data/curriculum'
+import { LEVELS, UNITS, WORD_BY_ID, unitById } from '../data/curriculum'
 import { PASS_SCORE, useProgress } from '../lib/store'
 import { buildLesson, buildLevelTest } from '../lib/exercises'
 import { sttSupported } from '../lib/speech'
 import { isUnitUnlocked, unitsOfLevel } from '../lib/units'
 import { LessonRunner, type LessonResult } from '../components/LessonRunner'
 import type { Level } from '../types'
+import { Icon } from '../components/Icon'
 
 export default function LessonPage() {
   const { unitId, level } = useParams()
@@ -43,10 +44,17 @@ export default function LessonPage() {
     const passed = result.score >= PASS_SCORE
     const idx = unit ? UNITS.findIndex((u) => u.id === unit.id) : -1
     const next = idx >= 0 ? UNITS[idx + 1] : undefined
+    // One row per Spanish item, with its Indonesian meaning.
+    const review = new Map<string, string>()
+    for (const m of result.mistakes) {
+      const w = m.wordId ? WORD_BY_ID.get(m.wordId) : undefined
+      if (w) review.set(w.es, w.id_)
+      else review.set(m.answer, m.prompt)
+    }
     return (
       <div className="result">
-        <div className="result-emoji">{result.score === 100 ? '🏆' : passed ? '🎉' : '💪'}</div>
-        <h1>{result.score === 100 ? '¡Perfecto!' : passed ? '¡Muy bien!' : '¡Casi!'}</h1>
+        <p className="kicker">{unit ? unit.title : `Ujian ${lvl}`}</p>
+        <h1 className="display">{result.score === 100 ? '¡Perfecto!' : passed ? '¡Muy bien!' : '¡Casi!'}</h1>
         <p className="muted">
           {passed
             ? unit
@@ -55,23 +63,23 @@ export default function LessonPage() {
             : `Butuh skor minimal ${PASS_SCORE}% untuk lulus. Coba sekali lagi!`}
         </p>
         <div className="result-stats">
-          <div className="card stat-box">
-            <div className="stat-num">{result.score}%</div>
-            <div className="muted small">Akurasi</div>
+          <div className="ledger-cell">
+            <span className="label">Akurasi</span>
+            <span className="figure">{result.score}%</span>
           </div>
-          <div className="card stat-box">
-            <div className="stat-num">+{result.xp}</div>
-            <div className="muted small">XP</div>
+          <div className="ledger-cell">
+            <span className="label">XP</span>
+            <span className="figure">+{result.xp}</span>
           </div>
         </div>
-        {result.mistakes.length > 0 && (
-          <div className="card mistakes">
-            <h3>Perlu diulang</h3>
+        {review.size > 0 && (
+          <div className="mistakes">
+            <h2 className="section-title">Perlu diulang</h2>
             <ul>
-              {result.mistakes.map((m) => (
-                <li key={m.key}>
-                  <span lang="es">{m.answer}</span>
-                  {m.kind !== 'mc-es' && <span className="muted"> · {m.prompt}</span>}
+              {[...review].map(([es, id_]) => (
+                <li key={es}>
+                  <span lang="es">{es}</span>
+                  <span className="muted"> · {id_}</span>
                 </li>
               ))}
             </ul>
@@ -85,11 +93,11 @@ export default function LessonPage() {
               setRound((r) => r + 1)
             }}
           >
-            ↻ Ulangi
+            <Icon name="repeat" size={16} /> Ulangi
           </button>
           {passed && next ? (
             <Link to={`/unit/${next.id}`} className="btn primary">
-              Unit berikutnya →
+              Unit berikutnya <Icon name="right" size={16} />
             </Link>
           ) : (
             <Link to={exitTo} className="btn primary">

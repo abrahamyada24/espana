@@ -10,15 +10,16 @@ import Pronunciation from './pages/Pronunciation'
 import Dictionary from './pages/Dictionary'
 import Settings from './pages/Settings'
 import { effectiveStreak, useProgress } from './lib/store'
+import { Icon, type IconName } from './components/Icon'
 
-const NAV = [
-  { to: '/', icon: '🏠', label: 'Beranda' },
-  { to: '/belajar', icon: '📚', label: 'Belajar' },
-  { to: '/ulasan', icon: '🃏', label: 'Ulasan' },
-  { to: '/konjugasi', icon: '🔀', label: 'Konjugasi' },
-  { to: '/pelafalan', icon: '🗣️', label: 'Pelafalan' },
-  { to: '/kamus', icon: '📖', label: 'Kamus' },
-  { to: '/pengaturan', icon: '⚙️', label: 'Pengaturan' },
+const NAV: { to: string; icon: IconName; label: string }[] = [
+  { to: '/', icon: 'home', label: 'Beranda' },
+  { to: '/belajar', icon: 'book', label: 'Belajar' },
+  { to: '/ulasan', icon: 'cards', label: 'Ulasan' },
+  { to: '/konjugasi', icon: 'table', label: 'Konjugasi' },
+  { to: '/pelafalan', icon: 'wave', label: 'Pelafalan' },
+  { to: '/kamus', icon: 'search', label: 'Kamus' },
+  { to: '/pengaturan', icon: 'sliders', label: 'Pengaturan' },
 ]
 
 export default function App() {
@@ -44,28 +45,29 @@ export default function App() {
 
   return (
     <div className="shell">
-      <aside className="sidebar">
-        <NavLink to="/" className="brand">
-          <span className="brand-logo">ñ</span>
-          <span>
-            ¡Vamos!
-            <small>Belajar Spanyol</small>
-          </span>
+      <header className="masthead">
+        <NavLink to="/" className="wordmark">
+          <span className="wm-mark">ñ</span>
+          <span className="wm-text">Vamos</span>
         </NavLink>
-        <nav>
+        <nav className="nav">
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.to === '/'} className="nav-item">
-              <span className="nav-icon">{n.icon}</span>
+              <Icon name={n.icon} size={20} className="nav-icon" />
               <span className="nav-label">{n.label}</span>
               {n.to === '/ulasan' && due > 0 && <span className="badge">{due}</span>}
             </NavLink>
           ))}
         </nav>
-        <div className="side-stats">
-          <span title="Runtutan hari">🔥 {effectiveStreak(progress)}</span>
-          <span title="Total XP">⭐ {progress.xp}</span>
+        <div className="mast-stats">
+          <span>
+            <b>{effectiveStreak(progress)}</b> hari
+          </span>
+          <span>
+            <b>{progress.xp}</b> XP
+          </span>
         </div>
-      </aside>
+      </header>
       <main className="content">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -79,6 +81,9 @@ export default function App() {
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
+      <footer className="colophon">
+        Vamos · Kurikulum mengikuti CEFR &amp; Plan Curricular del Instituto Cervantes
+      </footer>
     </div>
   )
 }

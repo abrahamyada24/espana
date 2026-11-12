@@ -20,14 +20,17 @@ export default function Verbs() {
 
   return (
     <div className="page">
-      <h1>Konjugasi kata kerja</h1>
-      <p className="muted">Kata kerja adalah jantung bahasa Spanyol. Pelajari polanya di tabel, lalu latih sampai otomatis.</p>
+      <header className="page-head">
+        <p className="kicker">Tata bahasa</p>
+        <h1 className="display">Konjugasi</h1>
+        <p className="lede">Kata kerja adalah inti bahasa Spanyol. Pelajari polanya di tabel, lalu latih sampai keluar dengan sendirinya.</p>
+      </header>
       <div className="tabs">
         <button className={`tab ${mode === 'tabel' ? 'active' : ''}`} onClick={() => setMode('tabel')}>
-          📋 Tabel
+          Tabel
         </button>
         <button className={`tab ${mode === 'drill' ? 'active' : ''}`} onClick={() => setMode('drill')}>
-          ⚡ Latihan cepat
+          Latihan cepat
         </button>
       </div>
 
@@ -41,7 +44,7 @@ export default function Verbs() {
             ))}
           </div>
           <p className="small muted">
-            <span className="legend irr" /> tidak beraturan &nbsp; <span className="legend" /> beraturan
+            <span className="legend irr" /> bentuk tidak beraturan
           </p>
           <h2 lang="es">
             {verb.inf} <SpeakButton text={verb.inf} /> <span className="muted small">· {verb.id_}</span>
@@ -136,7 +139,7 @@ function Drill() {
           </button>
         ))}
       </div>
-      <form className="card drill-card" onSubmit={submit}>
+      <form className="drill-card" onSubmit={submit}>
         <div className="muted small">
           {tenseInfo.name} · {tenseInfo.desc}
         </div>
@@ -159,18 +162,18 @@ function Drill() {
         {state === 'ask' && <AccentKeyboard inputRef={inputRef} onInsert={setInput} />}
         {state !== 'ask' && (
           <p className={state === 'ok' ? 'ok-text' : 'bad-text'}>
-            {state === 'ok' ? '¡Correcto! ✅' : '❌ Jawaban benar: '}
+            {state === 'ok' ? '¡Correcto!' : 'Jawaban benar: '}
             {state === 'bad' && <strong lang="es">{q.answer}</strong>}
           </p>
         )}
         <button className="btn primary" type="submit">
-          {state === 'ask' ? 'Periksa' : 'Berikutnya →'}
+          {state === 'ask' ? 'Periksa' : 'Berikutnya'}
         </button>
         <div className="row-between small muted">
           <span>
             Benar {stats.ok}/{stats.total}
           </span>
-          <span>🔥 {stats.streak}</span>
+          <span>Beruntun {stats.streak}</span>
         </div>
       </form>
     </div>
