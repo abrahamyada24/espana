@@ -14,7 +14,7 @@ Web app untuk belajar bahasa Spanyol dari nol, dengan antarmuka berbahasa Indone
 | **Pelafalan** | Alfabet dengan penjelasan bunyi untuk penutur Indonesia + lab pengucapan (speech recognition). |
 | **Kamus** | Pencarian semua kosakata (toleran aksen). |
 | **Gamifikasi** | XP, runtutan harian, target harian, grafik aktivitas. |
-| **Audio tanpa server** | Web Speech API, aksen Spanyol atau Amerika Latin . |
+| **Audio tanpa server** | Web Speech API, aksen Spanyol atau Amerika Latin. |
 | **Keyboard aksen** | Tombol á é í ó ú ñ ü ¿ ¡; jawaban tanpa aksen tetap diterima dengan peringatan. |
 
 ## Stack
